@@ -46,13 +46,13 @@ improv_serial:
 wifi:
   ssid: ${ssid}
   password: ${password}
-  fast_connect: True
+  fast_connect: true
 
 captive_portal:
 
 # Web server disabled because it was using to much ram
 web_server:
- port: 80
+  port: 80
 
 # Enable logging
 logger:

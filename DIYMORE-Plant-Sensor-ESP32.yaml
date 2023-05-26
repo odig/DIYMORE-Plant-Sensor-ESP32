@@ -1,9 +1,9 @@
 ---
 substitutions:
-  ssid: your_ssid
-  password: "your password"
-  user_info: 'diymore'
-  devicename: 'plant-sensor'
+  ssid: 'your_ssid'
+  password: 'your password'
+  id: 'diymore.plant_sensor'
+  devicename: 'plantsensor'
   device_description: 'Plant Sensor'
   project_version: '1.0'
   update_interval: 30min
@@ -20,7 +20,7 @@ substitutions:
 
 esphome:
   project:
-    name: ${user_info}.${devicename}
+    name: ${id}
     version: "1.0"
   name: '${devicename}'
   comment: '${device_description}'
@@ -31,9 +31,6 @@ esphome:
           condition:
             wifi.connected:
           timeout: 10s
-  on_shutdown:
-    then:
-      - switch.turn_off: spower
 
 dashboard_import:
   package_import_url: github://odig/DIYMORE-Plant-Sensor-Esp32/DIYMORE-Plant-Sensor-ESP32.yaml@main

@@ -35,19 +35,3 @@ sensor:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - ${conductivity_min} -> 0.0 # comment when calibrating
           - ${conductivity_max} -> 100.0 # comment when calibrating
-
-  # Lux sensor
-  #- platform: bh1750
-  #  i2c_id: bus_a
-  #  name: '${devicename} BH1750 Illuminance'
-  #  address: 0x23
-  #  unit_of_measurement: 'lx'
-  #  icon: 'mdi:white-balance-sunny'
-  #  device_class: 'illuminance'
-  #  state_class: 'measurement'
-  #  setup_priority: -300
-  #  update_interval: ${update_interval}
-  #  # convert to illuminance
-  #  filters:
-  #    - lambda: |-
-  #        return x * 200.0;

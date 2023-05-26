@@ -1,0 +1,108 @@
+---
+substitutions:
+  ssid: your_ssid
+  password: "your password"
+  user_info: 'gido'
+  devicename: 'plant_sensor'
+  device_description: 'Plant Sensor'
+  project_version: '1.0'
+  update_interval: 30min
+  loglevel: DEBUG
+  moisture_min: '2.82'
+  moisture_max: '1.39'
+  conductivity_min: '0.075'
+  conductivity_max: '0.25'
+  # Uncomment run_duration and sleep_duration if you want to use deepsleep
+  # set how long to stay awake - NOT less then 10sec
+  # run_duration: 11s
+  # set how long to sleep in minutes
+  # sleep_duration: 60min
+
+esphome:
+  project:
+    name: ${user_info}.${devicename}
+    version: "1.0"
+  name: '${devicename}'
+  comment: '${device_description}'
+  on_boot:
+    priority: 240
+    then:
+      - wait_until:
+          condition:
+            wifi.connected:
+          timeout: 10s
+  on_shutdown:
+    then:
+      - switch.turn_off: spower
+
+dashboard_import:
+  package_import_url: github://odig/DIYMORE-Plant-Sensor-Esp32/DIYMORE-Plant-Sensor-ESP32.yaml@main
+
+esp32:
+  board: lolin_d32
+
+improv_serial:
+
+wifi:
+  ssid: ${ssid}
+  password: ${password}
+  fast_connect: True
+
+captive_portal:
+
+# Web server disabled because it was using to much ram
+web_server:
+ port: 80
+
+# Enable logging
+logger:
+  level: '${loglevel}'
+
+api:
+
+ota:
+  safe_mode: true
+  reboot_timeout: 10min
+  num_attempts: 5
+
+time:
+  - platform: homeassistant
+
+button:
+  - platform: restart
+    name: 'Restart - ${devicename}'
+
+i2c:
+  sda: 25
+  scl: 26
+  scan: true
+  id: bus_a
+  setup_priority: -200
+
+switch:
+  # Power Switch
+  - platform: gpio
+    name: '${devicename} Sensor Power switch'
+    pin:
+      number: 4
+      mode: INPUT_PULLUP
+    id: spower
+    restore_mode: ALWAYS_ON
+    internal: true
+    setup_priority: 1000
+
+sensor:
+  # Wifi sensor
+  - platform: wifi_signal
+    name: '${devicename} WiFi Signal'
+    id: '${devicename}_wifi_signal'
+    update_interval: ${update_interval}
+
+packages:
+  text_sensors: !include common/text_sensors.yaml
+  dht: !include common/dht.yaml
+  plantsensors: !include common/plantsensors.yaml
+  battery: !include common/battery.yaml
+  # bluetooth: !include common/bluetooth.yaml
+  # Battery only works for 12 hours with deepsleep!
+  # deepsleep: !include common/deepsleep.yaml

@@ -1,0 +1,34 @@
+---
+name: Build and publish
+
+on: [push] # yamllint disable-line rule:truthy
+
+jobs:
+  build:
+    name: Building ${{ matrix.file }}
+    runs-on: ubuntu-latest
+    if: needs.pr-check.outputs.number != 'null'
+    strategy:
+      matrix:
+        file:
+          - DIYMORE-Plant-Sensor-ESP32.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .github/yamllint.yml
+      - name: Build ESPHome firmware to verify configuration
+        uses: esphome/build-action@v1.8.0
+        with:
+          yaml_file: ${{ matrix.file }}
+  publish:
+    needs: build
+    name: Publish firmware
+    uses: esphome/workflows/.github/workflows/publish.yml@main
+    with:
+      files: DIYMORE-Plant-Sensor-ESP32.yaml
+      name: ESPHome Plant monitor
+      manifest_filename: diymore-plant-sensor-manifest.json
+      clean: false

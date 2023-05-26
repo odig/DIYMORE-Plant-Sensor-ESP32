@@ -1,0 +1,24 @@
+---
+name: Test PR
+
+on: [pull_request] # yamllint disable-line rule:truthy
+
+jobs:
+  build:
+    name: Building ${{ matrix.file }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file:
+          - DIYMORE-Plant-Sensor-ESP32.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .github/yamllint.yml
+      - name: Build ESPHome firmware to verify configuration
+        uses: esphome/build-action@v1.8.0
+        with:
+          yaml_file: ${{ matrix.file }}
